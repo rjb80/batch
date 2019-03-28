@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common">
+
+		  <select id="select_date"  resultType="HashMap">
+			select ymd
+			from copy_ymd
+			where ymd between #{as_from_dt} and #{as_to_dt} 		  
+		  </select>
+	
+	
+		  <select id="select_sysdate"  resultType="HashMap">
+		
+		    SELECT to_char(sysdate,'YYYYMMDDHH24MISS') sysdt
+		    from dual
+	
+		 </select> 	  		
+	
+	 
+	
+	  <select id="select_return_cancel_list"  resultType="java.util.LinkedHashMap">
+			  <![CDATA[
+			  
+					select /*+ index(a RMORDS_IND3) ordered use_nl(a b c) */
+					b.bef_order_id beq_order_id
+					,b.bef_order_seq beq_order_seq
+					,'반품취소' status
+					,to_char(to_timestamp(b.reg_dt,'YYYYMMDDHH24MISS') ,'YYYY-MM-DD HH24:MI:SS') created_at
+					from TestTableB1 b,TestTableB2 c
+					where b.order_dt between #{as_from_dt} and #{as_to_dt}
+					and b.order_ret_gb like '2%'
+					and b.order_ret_gb <> '25'
+					and b.order_id = c.order_id
+					and b.status_cd='25'
+					and c.site_gb like #{as_service_gb}
+					and b.site_gb like #{as_site_gb}
+					
+					
+					
+					union all 
+					
+					
+					select /*+ index(a RMORDS_IND3) ordered use_nl(a b c) */
+					b.bef_order_id beq_order_id
+					,b.bef_order_seq beq_order_seq
+					,'반품취소' status
+					,to_char(to_timestamp(b.reg_dt,'YYYYMMDDHH24MISS') ,'YYYY-MM-DD HH24:MI:SS') created_at
+					from TestTableB1 b,TestTableB2 c
+					where b.order_dt between #{as_from_dt} and #{as_to_dt}
+					and b.order_ret_gb like '2%'
+					and b.order_ret_gb <> '25'
+					and b.order_id = c.order_id
+					and b.status_cd='31'
+					and c.site_gb like #{as_service_gb}
+					and b.site_gb like #{as_site_gb}
+					
+			  
+			  	
+			  ]]>
+	  </select>
+	
+			  
+	
+	
+	  	 
+	
+	  	 		 
+	
+</mapper>
